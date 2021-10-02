@@ -1,0 +1,65 @@
+---
+title: "TP2 y TP3 UAI II"
+author: "Magdalena Cortiñas"
+date: "2/10/2021"
+output: html_document
+---
+
+##TP2
+
+**Visualización de Datos**
+
+*1-Voy a comenzar cargando las librerías a utilizar:*
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+library(stringr) 
+library(rvest)
+
+*2-* 
+Voy trabajar la base de datos de casos covid caba de Abr/20 a Jun/21. 
+
+```{r}
+casos_covid_caba <- read.csv("https://cdn.buenosaires.gob.ar/datosabiertos/datasets/salud/casos-covid-19/casos_covid19.csv", header= TRUE, sep=',', dec='.', encoding = 'UTF-8')
+```
+
+Voy a generar un data frame mas chico para poder manipular las datos.
+
+```{r}
+casos_covid_reducido <- select(casos_covid_caba, barrio, comuna, genero, edad)
+```
+
+Continuo analizando el dataset: voy a continuar a filtrar el dataset por casos covid confirmados
+
+```{r}
+casos_confirmados <- casos_covid_caba[casos_covid_caba$clasificacion=="confirmado",]
+```
+
+Ahora inician el analisis distinguiendo por barrio, especificamente el barrio de Almagro.
+
+```{r}
+casos_almagro <- filter(casos_covid_caba, barrio=='ALMAGRO')
+```
+
+Voy a seleccionar de los casos confirmados las variables barrio, comuna, genero y edad.
+
+```{r}
+casos_covid_reducido <- select(casos_confirmados, barrio, comuna, genero, edad)
+```
+
+Continuando con el analisis manipulo los datos de cara a obtener el top 5 de barrios con más casos confirmados. 
+
+```{r}
+top5_barrios <- casos_covid_caba %>% 
+    filter(provincia == 'CABA' & clasificacion== 'confirmado') %>% 
+    group_by(barrio) %>% 
+    summarise(total = n()) %>% 
+    arrange(desc(total)) %>% 
+    head(5)
+```
+
+
+
